@@ -3,6 +3,8 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="GGApp/Views/AuthPage.axaml" value="GGApp/GGApp.csproj" />
+        <entry key="GGApp/Views/LoginPage.axaml" value="GGApp/GGApp.csproj" />
         <entry key="GGApp/Views/MainWindow.axaml" value="GGApp/GGApp.csproj" />
       </map>
     </option>
