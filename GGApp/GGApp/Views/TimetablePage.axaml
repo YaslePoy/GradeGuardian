@@ -2,12 +2,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:GGApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="GGApp.Views.TimetablePage">
-    <DockPanel>
+             x:Class="GGApp.Views.TimetablePage" x:DataType="viewModels:TimetablePageViewModel">
+    <DockPanel LastChildFill="True">
         <TextBlock DockPanel.Dock="Top" FontSize="40" Margin="20">Дневник</TextBlock>
-        <StackPanel Orientation="Horizontal">
-            <Button></Button>
+        <StackPanel Margin="20" VerticalAlignment="Top" Spacing="10" Orientation="Horizontal">
+            <Button>&lt;</Button>
+            <Button>&gt;</Button>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <TextBlock Text="{Binding Day}"></TextBlock>
+                <TextBlock Foreground="Blue" IsVisible="{Binding Today}">сегодня</TextBlock>
+            </StackPanel>
+            <Button Background="Transparent" Padding="0"><Image Width="32" Source="../Assets/Calendar month.png"></Image></Button>
         </StackPanel>
+        <DataGrid DockPanel.Dock="Bottom" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Время"></DataGridTextColumn>
+                <DataGridTextColumn Header="Предмет"></DataGridTextColumn>
+                <DataGridTextColumn Header="Задание"></DataGridTextColumn>
+                <DataGridTextColumn Header="Комментарий"></DataGridTextColumn>
+                <DataGridTextColumn Header="Оценка"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </DockPanel>
 </UserControl>
