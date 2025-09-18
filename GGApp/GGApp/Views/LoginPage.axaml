@@ -36,6 +36,5 @@
                 Classes="Long LoginButton">
             Войти
         </Button>
-        <HyperlinkButton Command="{Binding GoRegister}" HorizontalAlignment="Right">Зарегистрироваться</HyperlinkButton>
     </StackPanel>
 </UserControl>
