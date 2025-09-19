@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:GGApp.ViewModels"
+             mc:Ignorable="d"
+             x:Class="GGApp.Views.AttendancePage"
+             x:DataType="viewModels:AttendancePageViewModel">
+
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/> <!-- Заголовок с днями -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок с именем студента -->
+        <Border Grid.Row="0" Background="#FFE3F2FD" Padding="15" Margin="10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="{Binding StudentName}" FontSize="18" FontWeight="Bold"
+                           Foreground="#1976D2" Margin="0,0,20,0"/>
+                <Button Content="Обновить" Click="DebugButton_Click" Padding="10,5"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ЗАГОЛОВОК С ДНЯМ МЕСЯЦА -->
+        <Border Grid.Row="1" Background="#F5F5F5" Padding="10,5" Margin="10,0,10,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/> <!-- Месяц -->
+                    <ColumnDefinition Width="*"/>   <!-- Дни -->
+                    <ColumnDefinition Width="80"/>  <!-- Итого -->
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Месяц" FontWeight="Bold"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                <!-- Заголовки дней -->
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding DayHeaders}"
+                              VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="40" Margin="2" Background="#E8E8E8"
+                                    CornerRadius="3" Padding="2">
+                                <TextBlock Text="{Binding}" FontSize="10" FontWeight="Bold"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           TextAlignment="Center"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock Grid.Column="2" Text="Итого" FontWeight="Bold"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Список с данными -->
+        <ListBox x:Name="listBox"
+              Grid.Row="2"
+              ItemsSource="{Binding Rows}"
+              Margin="10"
+              Background="White"
+              BorderBrush="#CCCCCC"
+              BorderThickness="1"
+              ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="White" Padding="10" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding MonthYear}" FontWeight="Bold"
+                                       VerticalAlignment="Center" Margin="5,0"/>
+                            
+                            <ItemsControl Grid.Column="1" ItemsSource="{Binding DayValues}"
+                                          VerticalAlignment="Center">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Width="40" Height="30" Background="#F8F8F8" 
+                                                Margin="2" CornerRadius="3"
+                                                BorderBrush="#DDDDDD" BorderThickness="1">
+                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" 
+                                                       HorizontalAlignment="Center" FontSize="12"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Grid.Column="2" Text="{Binding TotalHours}" FontWeight="Bold"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Background="#E3F2FD" Padding="5" Margin="5,0"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            
+        </ListBox>
+    </Grid>
+</UserControl>

@@ -10,6 +10,7 @@ public abstract class DbEntity
     [Key] public int Id { get; set; }
 }
 
+[Table("Users", Schema = "public")]
 public class User : DbEntity
 {
     public string Name { get; set; }
@@ -21,6 +22,7 @@ public class User : DbEntity
     public int RoleId { get; set; }
 }
 
+[Table("Subjects", Schema = "public")]
 public class Subject : DbEntity
 {
     public string Name { get; set; }
@@ -28,6 +30,7 @@ public class Subject : DbEntity
     public virtual User Teacher { get; set; }
 }
 
+[Table("Lessons", Schema = "public")]
 public class Lesson : DbEntity
 {
     [ForeignKey("Subject")] public int SubjectId { get; set; }
@@ -37,6 +40,7 @@ public class Lesson : DbEntity
     public DateTime? Deadline { get; set; }
 }
 
+[Table("Grades", Schema = "public")]
 public class Grade : DbEntity
 {
     public int StudentId { get; set; }
@@ -49,6 +53,7 @@ public class Grade : DbEntity
     public string Comment { get; set; }
 }
 
+[Table("Attendences", Schema = "public")]
 public class Attendence : DbEntity
 {
     public int StudentId { get; set; }
@@ -69,7 +74,8 @@ public class GGContext : DbContext
     
     public GGContext()
     {
-        Database.EnsureCreated();
+        // Не создаём схему автоматически — используем существующие таблицы
+        // Database.EnsureCreated();
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

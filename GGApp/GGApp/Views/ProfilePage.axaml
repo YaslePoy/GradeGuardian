@@ -1,0 +1,129 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:GGApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="GGApp.Views.ProfilePage"
+             x:DataType="vm:ProfilePageViewModel">
+
+  <Design.DataContext>
+    <vm:ProfilePageViewModel />
+  </Design.DataContext>
+
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- Заголовок -->
+    <TextBlock Grid.Row="0" 
+               Text="Профиль студента" 
+               FontSize="28" 
+               FontWeight="Bold" 
+               HorizontalAlignment="Center" 
+               Margin="0,0,0,30"/>
+
+    <!-- Карточка профиля -->
+    <Border Grid.Row="1" 
+            Background="White" 
+            CornerRadius="12" 
+            Padding="30" 
+            BoxShadow="0 4 20 0 #1A000000">
+      
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Кнопка редактирования -->
+        <Button Grid.Row="0" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding EditCommand}"
+                IsVisible="{Binding !IsEditing}">
+          <Button.Content>
+            <PathIcon Data="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19z" 
+                     Foreground="Gray" 
+                     Width="24" 
+                     Height="24"/>
+          </Button.Content>
+        </Button>
+
+        <!-- Содержимое карточки -->
+        <StackPanel Grid.Row="1" Spacing="20">
+          
+          <!-- ФИО -->
+          <StackPanel Spacing="8">
+            <TextBlock Text="ФИО" FontWeight="SemiBold" FontSize="14" Foreground="Gray"/>
+            <TextBlock Text="{Binding Surname}" FontSize="18" FontWeight="Medium"/>
+          </StackPanel>
+
+          <!-- Email -->
+          <StackPanel Spacing="8">
+            <TextBlock Text="Email" FontWeight="SemiBold" FontSize="14" Foreground="Gray"/>
+            <TextBox Text="{Binding Email}" 
+                     IsReadOnly="True" 
+                     FontSize="16"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     IsVisible="{Binding !IsEditing}"/>
+            <TextBox Text="{Binding TempEmail}" 
+                     FontSize="16"
+                     IsVisible="{Binding IsEditing}"/>
+          </StackPanel>
+
+          <!-- Телефон -->
+          <StackPanel Spacing="8">
+            <TextBlock Text="Номер телефона" FontWeight="SemiBold" FontSize="14" Foreground="Gray"/>
+            <TextBox Text="{Binding Phone}" 
+                     IsReadOnly="True" 
+                     FontSize="16"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     IsVisible="{Binding !IsEditing}"/>
+            <TextBox Text="{Binding TempPhone}" 
+                     FontSize="16"
+                     IsVisible="{Binding IsEditing}"/>
+          </StackPanel>
+
+          <!-- Логин -->
+          <StackPanel Spacing="8">
+            <TextBlock Text="Логин" FontWeight="SemiBold" FontSize="14" Foreground="Gray"/>
+            <TextBlock Text="{Binding Login}" FontSize="16"/>
+          </StackPanel>
+
+          <!-- Пароль -->
+          <StackPanel Spacing="8">
+            <TextBlock Text="Пароль" FontWeight="SemiBold" FontSize="14" Foreground="Gray"/>
+            <TextBlock Text="{Binding Password}" FontSize="16"/>
+          </StackPanel>
+
+          <!-- Кнопки редактирования -->
+          <StackPanel Orientation="Horizontal" 
+                      HorizontalAlignment="Right" 
+                      Spacing="10"
+                      IsVisible="{Binding IsEditing}">
+            <Button Content="Сохранить" 
+                    Command="{Binding SaveCommand}"
+                    Background="#007ACC"
+                    Foreground="White"
+                    Padding="20,10"
+                    CornerRadius="6"/>
+            <Button Content="Отмена" 
+                    Command="{Binding CancelCommand}"
+                    Background="Gray"
+                    Foreground="White"
+                    Padding="20,10"
+                    CornerRadius="6"/>
+          </StackPanel>
+
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

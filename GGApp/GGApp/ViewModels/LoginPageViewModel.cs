@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Windows.Input;
+using System.Reactive;
 using ReactiveUI;
 
 namespace GGApp.ViewModels;
@@ -15,31 +11,62 @@ public class LoginPageViewModel : ReactiveObject, IRoutableViewModel
     private readonly List<string> _incorrectAuth = new();
     private bool _invalidData;
 
-    public LoginPageViewModel(IScreen hostScreen)
-    {
-        HostScreen = hostScreen;
-    }
-
     public string Login { get; set; }
     public string Password { get; set; }
     
+    public ReactiveCommand<Unit, Unit> TryAuth { get; }
 
-    public ICommand TryAuth => ReactiveCommand.Create(async () =>
+    public LoginPageViewModel(IScreen hostScreen)
     {
-        Debug.WriteLine($"Login: {Login}, password: {Password}");
-        if (App.Db.Users.FirstOrDefault(i => i.Login == Login && i.Password == Password) is {} loginResponse)
+        HostScreen = hostScreen;
+        
+        TryAuth = ReactiveCommand.CreateFromTask(async () =>
         {
-            if (!Directory.Exists("./UserData")) Directory.CreateDirectory("./UserData");
-            App.State.User = loginResponse;
-            
-            HostScreen.Router.Navigate.Execute(new BasePageViewModel(HostScreen));
-        }
-        else
-        {
-            _incorrectAuth.Add(Login + "+" + Password);
-            this.RaiseAndSetIfChanged(ref _invalidData, true, nameof(InvalidData));
-        }
-    });
+            if (string.IsNullOrEmpty(Login) || string.IsNullOrEmpty(Password) || Password.Length < 6)
+            {
+                _incorrectAuth.Add(Login + "+" + Password);
+                this.RaiseAndSetIfChanged(ref _invalidData, true, nameof(InvalidData));
+                return;
+            }
+
+            try
+            {
+                // РЕАЛЬНАЯ ПРОВЕРКА АВТОРИЗАЦИИ ИЗ БАЗЫ ДАННЫХ
+                using var db = new GGContext();
+                
+                var loginInput = Login.Trim();
+                var passwordInput = Password.Trim();
+                var loginLower = loginInput.ToLower();
+
+                // Ищем пользователя по логину или email
+                var user = db.Users.FirstOrDefault(u =>
+                    (u.Login.ToLower() == loginLower || u.Email.ToLower() == loginLower) &&
+                    u.Password == passwordInput);
+
+                if (user != null)
+                {
+                    // УСПЕШНАЯ АВТОРИЗАЦИЯ
+                    AppSession.CurrentUserId = user.Id;
+                    Console.WriteLine($"Успешная авторизация: UserId={user.Id}, Name={user.Name} {user.Surname}");
+                    
+                    this.RaiseAndSetIfChanged(ref _invalidData, false, nameof(InvalidData));
+                }
+                else
+                {
+                    // НЕУСПЕШНАЯ АВТОРИЗАЦИЯ
+                    _incorrectAuth.Add(Login + "+" + Password);
+                    this.RaiseAndSetIfChanged(ref _invalidData, true, nameof(InvalidData));
+                    Console.WriteLine("Неверные логин или пароль");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка авторизации: {ex.Message}");
+                _incorrectAuth.Add(Login + "+" + Password);
+                this.RaiseAndSetIfChanged(ref _invalidData, true, nameof(InvalidData));
+            }
+        });
+    }
 
     public bool InvalidData
     {

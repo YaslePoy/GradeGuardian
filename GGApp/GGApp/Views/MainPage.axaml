@@ -1,0 +1,138 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:GGApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="GGApp.Views.MainPage"
+             x:DataType="vm:MainPageViewModel">
+
+  <Design.DataContext>
+    <vm:MainPageViewModel />
+  </Design.DataContext>
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="250"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- Боковая панель -->
+    <Border Grid.Column="0" 
+            Background="#2C3E50" 
+            Padding="0">
+      
+      <StackPanel>
+        <!-- Аватарка и ФИО -->
+        <Border Background="#34495E" 
+                Padding="20" 
+                Margin="0,0,0,20">
+          <StackPanel HorizontalAlignment="Center">
+            <!-- Кругляшок с аватаркой -->
+            <Border Width="80" 
+                    Height="80" 
+                    Background="#7F8C8D" 
+                    CornerRadius="40" 
+                    Margin="0,0,0,15"
+                    HorizontalAlignment="Center">
+              <Border Background="#95A5A6" 
+                      CornerRadius="35" 
+                      Margin="5">
+                <TextBlock Text="👤" 
+                           FontSize="40" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"/>
+              </Border>
+            </Border>
+            
+            <!-- ФИО -->
+            <TextBlock Text="{Binding UserSurname}" 
+                       FontSize="16" 
+                       FontWeight="Bold" 
+                       Foreground="White" 
+                       HorizontalAlignment="Center"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Навигационные кнопки -->
+        <StackPanel Spacing="5" Margin="0,0,0,20">
+          
+          <!-- Кнопка Профиль -->
+          <Button Command="{Binding ProfileCommand}"
+                  HorizontalAlignment="Stretch"
+                  Margin="10,0"
+                  Padding="20,15"
+                  Background="#34495E"
+                  Foreground="White"
+                  BorderThickness="0"
+                  CornerRadius="8">
+            <Button.Styles>
+              <Style Selector="Button:pointerover">
+                <Setter Property="Background" Value="#3498DB"/>
+              </Style>
+              <Style Selector="Button:checked">
+                <Setter Property="Background" Value="#3498DB"/>
+              </Style>
+            </Button.Styles>
+            <Button.Content>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="👤" FontSize="18" Margin="0,0,10,0"/>
+                <TextBlock Text="Профиль" FontSize="14" FontWeight="SemiBold"/>
+              </StackPanel>
+            </Button.Content>
+          </Button>
+
+          <!-- Кнопка Посещаемость -->
+          <Button Command="{Binding AttendanceCommand}"
+                  HorizontalAlignment="Stretch"
+                  Margin="10,0"
+                  Padding="20,15"
+                  Background="#34495E"
+                  Foreground="White"
+                  BorderThickness="0"
+                  CornerRadius="8">
+            <Button.Styles>
+              <Style Selector="Button:pointerover">
+                <Setter Property="Background" Value="#3498DB"/>
+              </Style>
+              <Style Selector="Button:checked">
+                <Setter Property="Background" Value="#3498DB"/>
+              </Style>
+            </Button.Styles>
+            <Button.Content>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="📊" FontSize="18" Margin="0,0,10,0"/>
+                <TextBlock Text="Посещаемость" FontSize="14" FontWeight="SemiBold"/>
+              </StackPanel>
+            </Button.Content>
+          </Button>
+
+        </StackPanel>
+
+        <!-- Кнопка выхода -->
+        <Button Content="🚪 Выйти" 
+                HorizontalAlignment="Stretch"
+                Margin="10,0,10,20"
+                Padding="20,15"
+                Background="#E74C3C"
+                Foreground="White"
+                BorderThickness="0"
+                CornerRadius="8"
+                FontSize="14"
+                FontWeight="SemiBold"
+                Click="LogoutButton_Click"/>
+
+      </StackPanel>
+    </Border>
+
+    <!-- Основной контент -->
+    <Border Grid.Column="1" 
+            Background="#F8F9FA" 
+            Padding="0">
+      <ContentControl Content="{Binding CurrentPage}"/>
+    </Border>
+
+  </Grid>
+</UserControl>
