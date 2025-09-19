@@ -8,6 +8,9 @@ namespace GGApp;
 
 public partial class App : Application
 {
+
+    public static AppState State { get; private set; } = new();
+    public static GGContext Db { get; } = new();
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -25,4 +28,9 @@ public partial class App : Application
 
         base.OnFrameworkInitializationCompleted();
     }
+}
+
+public class AppState
+{
+    public int UserId { get; set; }
 }

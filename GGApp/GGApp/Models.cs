@@ -25,13 +25,13 @@ public class Subject : DbEntity
 {
     public string Name { get; set; }
     [ForeignKey("Teacher")] public int TeacherId { get; set; }
-    public User Teacher { get; set; }
+    public virtual User Teacher { get; set; }
 }
 
 public class Lesson : DbEntity
 {
     [ForeignKey("Subject")] public int SubjectId { get; set; }
-    public Subject Subject { get; set; }
+    public virtual Subject Subject { get; set; }
     public DateTime LessonDay { get; set; }
     public string Task { get; set; }
     public DateTime? Deadline { get; set; }
@@ -40,9 +40,9 @@ public class Lesson : DbEntity
 public class Grade : DbEntity
 {
     public int StudentId { get; set; }
-    [ForeignKey("StudentId")] public User Student { get; set; }
+    [ForeignKey("StudentId")] public virtual User Student { get; set; }
     public int LessonId { get; set; }
-    [ForeignKey("LessonId")] public Lesson Lesson { get; set; }
+    [ForeignKey("LessonId")] public virtual Lesson Lesson { get; set; }
 
     public int Value { get; set; }
     public DateTime SetupDate { get; set; }
@@ -52,9 +52,9 @@ public class Grade : DbEntity
 public class Attendence : DbEntity
 {
     public int StudentId { get; set; }
-    [ForeignKey("StudentId")] public User Student { get; set; }
+    [ForeignKey("StudentId")] public virtual User Student { get; set; }
     public int LessonId { get; set; }
-    [ForeignKey("LessonId")] public Lesson Lesson { get; set; }
+    [ForeignKey("LessonId")] public virtual Lesson Lesson { get; set; }
     public bool IsPass { get; set; }
     public bool IsLate { get; set; }
 }
@@ -74,6 +74,6 @@ public class GGContext : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=micialware.ru;Port=5432;Database=ggdb;Username=trieco_admin;Password=trieco");
+        optionsBuilder.UseLazyLoadingProxies().UseNpgsql("Host=micialware.ru;Port=5432;Database=ggdb;Username=trieco_admin;Password=trieco");
     }
 }
