@@ -6,7 +6,7 @@ public class MainWindowViewModel : ReactiveObject, IScreen
 {
     public MainWindowViewModel()
     {
-        Router.Navigate.Execute(new LoginPageViewModel(this));
+        Router.Navigate.Execute(new TimetablePageViewModel(this));
     }
     public RoutingState Router { get; } = new();
 }

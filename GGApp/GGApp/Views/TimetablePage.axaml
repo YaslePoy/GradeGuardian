@@ -5,18 +5,22 @@
              xmlns:viewModels="clr-namespace:GGApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="GGApp.Views.TimetablePage" x:DataType="viewModels:TimetablePageViewModel">
-    <DockPanel LastChildFill="True">
-        <TextBlock DockPanel.Dock="Top" FontSize="40" Margin="20">Дневник</TextBlock>
-        <StackPanel Margin="20" VerticalAlignment="Top" Spacing="10" Orientation="Horizontal">
-            <Button>&lt;</Button>
-            <Button>&gt;</Button>
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                <TextBlock Text="{Binding Day}"></TextBlock>
-                <TextBlock Foreground="Blue" IsVisible="{Binding Today}">сегодня</TextBlock>
+    <Grid RowDefinitions="Auto *">
+        <StackPanel Orientation="Vertical">
+            <TextBlock DockPanel.Dock="Top" FontSize="40" Margin="20">Дневник</TextBlock>
+            <StackPanel Margin="20" VerticalAlignment="Top" Spacing="10" Orientation="Horizontal">
+                <Button>&lt;</Button>
+                <Button>&gt;</Button>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding Day}"></TextBlock>
+                    <TextBlock Foreground="Blue" IsVisible="{Binding Today}">сегодня</TextBlock>
+                </StackPanel>
+                <Button Background="Transparent" Padding="0">
+                    <Image Width="32" Source="../Assets/Calendar month.png"></Image>
+                </Button>
             </StackPanel>
-            <Button Background="Transparent" Padding="0"><Image Width="32" Source="../Assets/Calendar month.png"></Image></Button>
         </StackPanel>
-        <DataGrid DockPanel.Dock="Bottom" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <DataGrid Grid.Row="1" DockPanel.Dock="Bottom">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Время"></DataGridTextColumn>
                 <DataGridTextColumn Header="Предмет"></DataGridTextColumn>
@@ -25,5 +29,5 @@
                 <DataGridTextColumn Header="Оценка"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-    </DockPanel>
+    </Grid>
 </UserControl>
