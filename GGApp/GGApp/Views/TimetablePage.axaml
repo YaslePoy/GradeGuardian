@@ -23,7 +23,7 @@
         </StackPanel>
         <DataGrid Grid.Row="1" DockPanel.Dock="Bottom" ItemsSource="{Binding TableData}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Время" Binding="{Binding LessonDay}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Время" Binding="{Binding Time}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Предмет" Binding="{Binding Subject.Name}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Задание" Binding="{Binding Task}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Комментарий" Binding="{Binding Grade.Comment}"></DataGridTextColumn>

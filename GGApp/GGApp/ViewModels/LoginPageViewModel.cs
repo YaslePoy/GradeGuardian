@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Windows.Input;
@@ -25,22 +26,19 @@ public class LoginPageViewModel : ReactiveObject, IRoutableViewModel
 
     public ICommand TryAuth => ReactiveCommand.Create(async () =>
     {
-        // Debug.WriteLine($"Login: {Login}, password: {Password}");
-        // if (await Api.Auth(Login, Password) is { } loginResponse)
-        // {
-        //     if (!Directory.Exists("./UserData")) Directory.CreateDirectory("./UserData");
-        //     AppContext.CurrentUser = loginResponse;
-        //
-        //     var saving = JsonSerializer.Serialize(loginResponse, Api.JsonOptions);
-        //     Api.Http.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("Bearer " + AppContext.CurrentUser!.Token);
-        //     File.WriteAllText("./UserData/user.json", saving);
-        //     HostScreen.Router.Navigate.Execute(new BasePageViewModel(HostScreen));
-        // }
-        // else
-        // {
-        //     _incorrectAuth.Add(Login + "+" + Password);
-        //     this.RaiseAndSetIfChanged(ref _invalidData, true, nameof(InvalidData));
-        // }
+        Debug.WriteLine($"Login: {Login}, password: {Password}");
+        if (App.Db.Users.FirstOrDefault(i => i.Login == Login && i.Password == Password) is {} loginResponse)
+        {
+            if (!Directory.Exists("./UserData")) Directory.CreateDirectory("./UserData");
+            App.State.User = loginResponse;
+            
+            HostScreen.Router.Navigate.Execute(new TimetablePageViewModel(HostScreen));
+        }
+        else
+        {
+            _incorrectAuth.Add(Login + "+" + Password);
+            this.RaiseAndSetIfChanged(ref _invalidData, true, nameof(InvalidData));
+        }
     });
 
     public bool InvalidData

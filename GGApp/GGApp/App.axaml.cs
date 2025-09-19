@@ -32,5 +32,5 @@ public partial class App : Application
 
 public class AppState
 {
-    public int UserId { get; set; }
+    public User User { get; set; }
 }
