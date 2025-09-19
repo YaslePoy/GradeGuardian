@@ -47,6 +47,7 @@ public class LoginPageViewModel : ReactiveObject, IRoutableViewModel
                 {
                     // УСПЕШНАЯ АВТОРИЗАЦИЯ
                     AppSession.CurrentUserId = user.Id;
+                    App.State.User = user;
                     Console.WriteLine($"Успешная авторизация: UserId={user.Id}, Name={user.Name} {user.Surname}");
                     
                     this.RaiseAndSetIfChanged(ref _invalidData, false, nameof(InvalidData));

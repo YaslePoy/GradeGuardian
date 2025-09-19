@@ -58,7 +58,30 @@
 
         <!-- Навигационные кнопки -->
         <StackPanel Spacing="5" Margin="0,0,0,20">
-          
+          <!-- Кнопка Расписание -->
+          <Button Command="{Binding TimetableCommand}"
+                  HorizontalAlignment="Stretch"
+                  Margin="10,0"
+                  Padding="20,15"
+                  Background="#34495E"
+                  Foreground="White"
+                  BorderThickness="0"
+                  CornerRadius="8">
+            <Button.Styles>
+              <Style Selector="Button:pointerover">
+                <Setter Property="Background" Value="#3498DB"/>
+              </Style>
+              <Style Selector="Button:checked">
+                <Setter Property="Background" Value="#3498DB"/>
+              </Style>
+            </Button.Styles>
+            <Button.Content>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="👤" FontSize="18" Margin="0,0,10,0"/>
+                <TextBlock Text="Раписание" FontSize="14" FontWeight="SemiBold"/>
+              </StackPanel>
+            </Button.Content>
+          </Button>
           <!-- Кнопка Профиль -->
           <Button Command="{Binding ProfileCommand}"
                   HorizontalAlignment="Stretch"

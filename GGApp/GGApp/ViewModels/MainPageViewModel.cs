@@ -71,6 +71,7 @@ public class MainPageViewModel : ViewModelBase
 
     public ICommand ProfileCommand { get; }
     public ICommand AttendanceCommand { get; }
+    public ICommand TimetableCommand => ReactiveCommand.Create(() => CurrentPage = new TimetablePage() { DataContext = new TimetablePageViewModel(null)});
 
     private async void LoadUserData()
     {
