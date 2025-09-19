@@ -10,8 +10,8 @@
         <StackPanel Orientation="Vertical">
             <TextBlock DockPanel.Dock="Top" FontSize="40" Margin="20">Дневник</TextBlock>
             <StackPanel Margin="20" VerticalAlignment="Top" Spacing="10" Orientation="Horizontal">
-                <Button>&lt;</Button>
-                <Button>&gt;</Button>
+                <Button Command="{Binding LastDate}">&lt;</Button>
+                <Button Command="{Binding NextDate}">&gt;</Button>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                     <TextBlock Text="{Binding Day}"></TextBlock>
                     <TextBlock Foreground="Blue" IsVisible="{Binding Today}">сегодня</TextBlock>
@@ -21,9 +21,9 @@
                 </Button>
             </StackPanel>
         </StackPanel>
-        <DataGrid Grid.Row="1" DockPanel.Dock="Bottom" ItemsSource="{Binding TableData}">
+        <DataGrid Grid.Row="1" DockPanel.Dock="Bottom" ItemsSource="{Binding TableData}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Время" Binding="{Binding LessonDay, StringFormat={}{}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Время" Binding="{Binding LessonDay}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Предмет" Binding="{Binding Subject.Name}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Задание" Binding="{Binding Task}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Комментарий" Binding="{Binding Grade.Comment}"></DataGridTextColumn>

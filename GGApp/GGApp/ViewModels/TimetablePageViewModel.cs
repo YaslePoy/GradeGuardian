@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 
 namespace GGApp.ViewModels;
 
-public class TimetablePageViewModel : ReactiveObject, IRoutableViewModel, IScreen
+public class TimetablePageViewModel : ReactiveObject, IRoutableViewModel, IScreen, INotifyPropertyChanged
 {
+    private DateTime _date = DateTime.Today;
+
     public TimetablePageViewModel(IScreen hostScreen)
     {
         HostScreen = hostScreen;
@@ -15,13 +19,26 @@ public class TimetablePageViewModel : ReactiveObject, IRoutableViewModel, IScree
     }
 
     public void UpdateTable()
-    { 
-        TableData =  App.Db.Lessons.ToList().Where(i => i.LessonDay.AddHours(3).Date == Date).Select(i => new LessonViewModel(App.Db.Grades.FirstOrDefault(j => j.LessonId == i.Id && j.StudentId == App.State.UserId))
-            { Deadline = i.Deadline, Id = i.Id, LessonDay = i.LessonDay, Subject = i.Subject, Task = i.Task }).ToList();
+    {
+        TableData = App.Db.Lessons.ToList().Where(i => i.LessonDay.AddHours(3).Date == Date).Select(i =>
+                new LessonViewModel(
+                        App.Db.Grades.FirstOrDefault(j => j.LessonId == i.Id && j.StudentId == App.State.UserId))
+                    { Deadline = i.Deadline, Id = i.Id, LessonDay = i.LessonDay, Subject = i.Subject, Task = i.Task })
+            .ToList();
         this.RaisePropertyChanged(nameof(TableData));
     }
-    
-    public DateTime Date => DateTime.Today;
+
+    public DateTime Date
+    {
+        get => _date;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _date, value);
+            UpdateTable();
+            this.RaisePropertyChanged(nameof(Day));
+        }
+    }
+
     public string Day => Date.ToString("M");
     public bool Today => true;
 
@@ -29,6 +46,16 @@ public class TimetablePageViewModel : ReactiveObject, IRoutableViewModel, IScree
     public IScreen HostScreen { get; }
     public RoutingState Router { get; } = new();
     public List<LessonViewModel> TableData { get; private set; } = new();
+
+    public ICommand NextDate => ReactiveCommand.Create(() =>
+    {
+        Date = Date.AddDays(1);
+    });
+
+    public ICommand LastDate => ReactiveCommand.Create(() =>
+    {
+        Date = Date.AddDays(-1);
+    });
 }
 
 public class LessonViewModel : Lesson
