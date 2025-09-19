@@ -6,6 +6,9 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="GGApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        xmlns:reactiveUi="http://reactiveui.net"
+        xmlns:ggApp="clr-namespace:GGApp"
+
         Icon="/Assets/avalonia-logo.ico"
         Title="GGApp">
 
@@ -14,6 +17,13 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+    <reactiveUi:RoutedViewHost Router="{Binding Router}">
+        <reactiveUi:RoutedViewHost.PageTransition>
+            <CrossFade Duration="0:00:01.000" />
+        </reactiveUi:RoutedViewHost.PageTransition>
+        <reactiveUi:RoutedViewHost.ViewLocator>
+            <!-- See AppViewLocator.cs section below -->
+            <ggApp:ViewLocator/>
+        </reactiveUi:RoutedViewHost.ViewLocator>
+    </reactiveUi:RoutedViewHost>
 </Window>

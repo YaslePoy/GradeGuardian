@@ -3,9 +3,11 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="GGApp/App.axaml" value="GGApp/GGApp.csproj" />
         <entry key="GGApp/Views/AuthPage.axaml" value="GGApp/GGApp.csproj" />
         <entry key="GGApp/Views/LoginPage.axaml" value="GGApp/GGApp.csproj" />
         <entry key="GGApp/Views/MainWindow.axaml" value="GGApp/GGApp.csproj" />
+        <entry key="GGApp/Views/TimetablePage.axaml" value="GGApp/GGApp.csproj" />
         <entry key="GGApp/Views/TimetableView.axaml" value="GGApp/GGApp.csproj" />
       </map>
     </option>

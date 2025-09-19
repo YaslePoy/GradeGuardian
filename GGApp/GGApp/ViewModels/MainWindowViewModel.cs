@@ -1,6 +1,12 @@
-﻿namespace GGApp.ViewModels;
+﻿using ReactiveUI;
 
-public class MainWindowViewModel : ViewModelBase
+namespace GGApp.ViewModels;
+
+public class MainWindowViewModel : ReactiveObject, IScreen
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    public MainWindowViewModel()
+    {
+        Router.Navigate.Execute(new LoginPageViewModel(this));
+    }
+    public RoutingState Router { get; } = new();
 }
