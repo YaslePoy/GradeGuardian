@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:reactiveUi="http://reactiveui.net"
+             xmlns:ggApp="clr-namespace:GGApp"
+             xmlns:viewModels="clr-namespace:GGApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="GGApp.Views.BasePage"
+             x:DataType="viewModels:BasePageViewModel">
+    <Grid ColumnDefinitions="300 *">
+        <StackPanel>
+            <HyperlinkButton Command="{Binding NavigateCommand}" CommandParameter="tt">Расписание</HyperlinkButton>
+            <HyperlinkButton Command="{Binding NavigateCommand}" CommandParameter="profile">Профиль</HyperlinkButton>
+        </StackPanel>
+        <reactiveUi:RoutedViewHost Grid.Column="1" Router="{Binding Router}">
+            <reactiveUi:RoutedViewHost.PageTransition>
+                <CrossFade Duration="0:00:01.000" />
+            </reactiveUi:RoutedViewHost.PageTransition>
+            <reactiveUi:RoutedViewHost.ViewLocator>
+                <!-- See AppViewLocator.cs section below -->
+                <ggApp:ViewLocator/>
+            </reactiveUi:RoutedViewHost.ViewLocator>
+        </reactiveUi:RoutedViewHost>
+    </Grid>
+</UserControl>

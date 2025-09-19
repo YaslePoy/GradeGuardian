@@ -32,7 +32,7 @@ public class LoginPageViewModel : ReactiveObject, IRoutableViewModel
             if (!Directory.Exists("./UserData")) Directory.CreateDirectory("./UserData");
             App.State.User = loginResponse;
             
-            HostScreen.Router.Navigate.Execute(new TimetablePageViewModel(HostScreen));
+            HostScreen.Router.Navigate.Execute(new BasePageViewModel(HostScreen));
         }
         else
         {
