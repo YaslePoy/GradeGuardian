@@ -8,6 +8,8 @@ namespace GGApp.Views;
 
 public partial class AttendancePage : UserControl
 {
+    private bool _isScrolling;
+    
     public AttendancePage()
     {
         Console.WriteLine("=== AttendancePage CONSTRUCTOR called ===");
@@ -19,35 +21,23 @@ public partial class AttendancePage : UserControl
         AvaloniaXamlLoader.Load(this);
     }
 
-    protected override void OnDataContextChanged(EventArgs e)
+    private void DataScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
     {
-        base.OnDataContextChanged(e);
-        Console.WriteLine("DataContext changed");
-
-        if (DataContext is AttendancePageViewModel vm)
-        {
-            Dispatcher.UIThread.InvokeAsync(() => 
-            {
-                Console.WriteLine($"Data loaded: {vm.Rows.Count} rows");
-            }, DispatcherPriority.Loaded);
-        }
-    }
-
-    private void DebugButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Console.WriteLine("=== REFRESH BUTTON CLICKED ===");
+        if (_isScrolling) return;
         
-        var itemsControl = this.FindControl<ItemsControl>("itemsControl");
-        if (itemsControl != null && DataContext is AttendancePageViewModel vm)
+        _isScrolling = true;
+        
+        var dataScrollViewer = sender as ScrollViewer;
+        var headerScrollViewer = this.FindControl<ScrollViewer>("headerScrollViewer");
+        
+        if (dataScrollViewer != null && headerScrollViewer != null)
         {
-            // Принудительно обновляем данные
-            itemsControl.ItemsSource = null;
-            itemsControl.ItemsSource = vm.Rows;
-            
-            Console.WriteLine($"ItemsControl refreshed with {vm.Rows.Count} rows");
+            // Синхронизируем горизонтальную прокрутку
+            headerScrollViewer.Offset = new Avalonia.Vector(dataScrollViewer.Offset.X, 0);
         }
+        
+        _isScrolling = false;
     }
-
 
     protected override void OnAttachedToVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
     {

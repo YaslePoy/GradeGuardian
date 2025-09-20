@@ -8,7 +8,7 @@ public class AttendanceRow
     public ObservableCollection<string> DayValues { get; set; } = new();
     public int TotalHours { get; set; }
 
-    public AttendanceRow() { } // Пустой конструктор для привязки
+    public AttendanceRow() { }
 
     public AttendanceRow(string monthYear, string[] dayValues, int totalHours)
     {

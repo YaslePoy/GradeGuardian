@@ -10,7 +10,7 @@
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/> <!-- Заголовок с днями -->
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -19,25 +19,25 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock Text="{Binding StudentName}" FontSize="18" FontWeight="Bold"
                            Foreground="#1976D2" Margin="0,0,20,0"/>
-                <Button Content="Обновить" Click="DebugButton_Click" Padding="10,5"/>
             </StackPanel>
         </Border>
 
         <!-- ЗАГОЛОВОК С ДНЯМ МЕСЯЦА -->
-        <Border Grid.Row="1" Background="#F5F5F5" Padding="10,5" Margin="10,0,10,0">
+        <ScrollViewer x:Name="headerScrollViewer" Grid.Row="1" 
+                      HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled"
+                      Margin="10,0,10,0">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/> <!-- Месяц -->
-                    <ColumnDefinition Width="*"/>   <!-- Дни -->
-                    <ColumnDefinition Width="80"/>  <!-- Итого -->
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Text="Месяц" FontWeight="Bold"
                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                <!-- Заголовки дней -->
-                <ItemsControl Grid.Column="1" ItemsSource="{Binding DayHeaders}"
-                              VerticalAlignment="Center">
+                <!-- Заголовки дней (только числа) -->
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding DayHeaders}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"/>
@@ -56,60 +56,56 @@
                 </ItemsControl>
 
                 <TextBlock Grid.Column="2" Text="Итого" FontWeight="Bold"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
             </Grid>
-        </Border>
+        </ScrollViewer>
 
         <!-- Список с данными -->
-        <ListBox x:Name="listBox"
-              Grid.Row="2"
-              ItemsSource="{Binding Rows}"
-              Margin="10"
-              Background="White"
-              BorderBrush="#CCCCCC"
-              BorderThickness="1"
-              ScrollViewer.HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="dataScrollViewer" Grid.Row="2" 
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                      Margin="10" Background="White" BorderBrush="#CCCCCC" BorderThickness="1"
+                      ScrollChanged="DataScrollViewer_ScrollChanged">
             
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border Background="White" Padding="10" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="80"/>
-                            </Grid.ColumnDefinitions>
+            <ItemsControl ItemsSource="{Binding Rows}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="White" Padding="10" BorderBrush="#EEEEEE" BorderThickness="0,0,0,1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="80"/>
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="{Binding MonthYear}" FontWeight="Bold"
-                                       VerticalAlignment="Center" Margin="5,0"/>
-                            
-                            <ItemsControl Grid.Column="1" ItemsSource="{Binding DayValues}"
-                                          VerticalAlignment="Center">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Width="40" Height="30" Background="#F8F8F8" 
-                                                Margin="2" CornerRadius="3"
-                                                BorderBrush="#DDDDDD" BorderThickness="1">
-                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" 
-                                                       HorizontalAlignment="Center" FontSize="12"/>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                <TextBlock Grid.Column="0" Text="{Binding MonthYear}" FontWeight="Bold"
+                                           VerticalAlignment="Center" Margin="5,0"/>
+                                
+                                <ItemsControl Grid.Column="1" ItemsSource="{Binding DayValues}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Width="40" Height="30" Background="#F8F8F8" 
+                                                    Margin="2" CornerRadius="3"
+                                                    BorderBrush="#DDDDDD" BorderThickness="1">
+                                                <TextBlock Text="{Binding}" VerticalAlignment="Center" 
+                                                           HorizontalAlignment="Center" FontSize="12"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
-                            <TextBlock Grid.Column="2" Text="{Binding TotalHours}" FontWeight="Bold"
-                                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                                       Background="#E3F2FD" Padding="5" Margin="5,0"/>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            
-        </ListBox>
+                                <TextBlock Grid.Column="2" Text="{Binding TotalHours}" FontWeight="Bold"
+                                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                                           Background="#E3F2FD" Padding="5" Margin="10,0"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </UserControl>

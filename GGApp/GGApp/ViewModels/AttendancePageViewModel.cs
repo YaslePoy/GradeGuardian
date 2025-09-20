@@ -1,8 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Globalization;
 using ReactiveUI;
+using Microsoft.EntityFrameworkCore;
 
 namespace GGApp.ViewModels;
 
@@ -17,7 +17,7 @@ public class AttendancePageViewModel : ViewModelBase
     }
     
     public ObservableCollection<AttendanceRow> Rows { get; } = new();
-    public ObservableCollection<string> DayHeaders { get; } = new();
+    public ObservableCollection<int> DayHeaders { get; } = new();
 
     public AttendancePageViewModel()
     {
@@ -40,14 +40,10 @@ public class AttendancePageViewModel : ViewModelBase
             var studentId = AppSession.CurrentUserId.Value;
             using var db = new GGContext();
 
-            // Получаем студента
             var student = db.Users.FirstOrDefault(u => u.Id == studentId);
             StudentName = student is null ? "Студент" : $"{student.Surname} {student.Name}".Trim();
 
-            // Загружаем тестовые данные
-            LoadTestData();
-            
-            Console.WriteLine("Data loaded successfully");
+            LoadAttendanceData(db, studentId);
         }
         catch (Exception ex)
         {
@@ -56,47 +52,80 @@ public class AttendancePageViewModel : ViewModelBase
         }
     }
 
-    private void LoadTestData()
+    private void LoadAttendanceData(GGContext db, int studentId)
     {
-        Console.WriteLine("Loading test data...");
-        
         Rows.Clear();
-        DayHeaders.Clear();
+    DayHeaders.Clear();
 
-        // Текущий месяц для заголовков
-        var currentDate = DateTime.Today;
-        var daysInMonth = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
-        
-        // Создаем заголовки с числами и днями недели
-        for (int day = 1; day <= daysInMonth; day++)
-        {
-            var date = new DateTime(currentDate.Year, currentDate.Month, day);
-            var dayOfWeek = GetShortDayOfWeek(date.DayOfWeek);
-            DayHeaders.Add($"{day}\n{dayOfWeek}");
-        }
+    // Получаем ВСЕ пропуски студента (IsPass = true) с датами
+    var attendances = db.Attendences
+        .Where(a => a.StudentId == studentId && a.IsPass)
+        .Include(a => a.Lesson)
+        .ToList(); // ✅ Убрали фильтр на null — он не нужен, если LessonDay не nullable
 
-        // Создаем тестовые данные для 3 месяцев
-        for (int monthOffset = -2; monthOffset <= 0; monthOffset++)
+    Console.WriteLine($"Total attendances found: {attendances.Count}");
+
+    if (!attendances.Any())
+    {
+        LoadEmptyData();
+        return;
+    }
+
+    var monthsWithAttendance = attendances
+        .Select(a => new
         {
-            var monthDate = DateTime.Today.AddMonths(monthOffset);
-            var monthDays = DateTime.DaysInMonth(monthDate.Year, monthDate.Month);
-            
+            Year = a.Lesson.LessonDay.Year,   // ✅ Без .Value, потому что LessonDay — DateTime
+            Month = a.Lesson.LessonDay.Month
+        })
+        .Distinct()
+        .OrderBy(x => x.Year)
+        .ThenBy(x => x.Month)
+        .ToList();
+
+
+        Console.WriteLine($"Months with attendance: {monthsWithAttendance.Count}");
+
+        // Для каждого месяца генерируем строку
+        foreach (var monthInfo in monthsWithAttendance)
+        {
+            var monthDate = new DateTime(monthInfo.Year, monthInfo.Month, 1);
+            var monthDays = DateTime.DaysInMonth(monthInfo.Year, monthInfo.Month);
+
+            // Обновляем DayHeaders — по дням текущего месяца
+            DayHeaders.Clear();
+            for (int day = 1; day <= monthDays; day++)
+            {
+                DayHeaders.Add(day);
+            }
+
             var values = new string[monthDays];
             var totalHours = 0;
-            var random = new Random();
-            
-            for (int d = 0; d < monthDays; d++)
+
+            for (int day = 1; day <= monthDays; day++)
             {
-                // Случайные данные для теста
-                if (random.Next(0, 10) > 6) // 40% chance of having data
+                var currentDay = new DateTime(monthInfo.Year, monthInfo.Month, day);
+                
+                // Воскресенье — тире
+                if (currentDay.DayOfWeek == DayOfWeek.Sunday)
                 {
-                    var hours = random.Next(1, 5);
-                    values[d] = hours.ToString();
+                    values[day - 1] = "—";
+                    continue;
+                }
+
+                // Ищем пропуски в этот день
+                var dayAttendances = attendances
+                    .Where(a => a.Lesson.LessonDay.Date == currentDay.Date)
+                    .ToList();
+
+                if (dayAttendances.Count > 0)
+                {
+                    var hours = dayAttendances.Count * 2; // 2 часа за каждый пропуск
+                    values[day - 1] = hours.ToString();
                     totalHours += hours;
                 }
                 else
                 {
-                    values[d] = "0";
+                    values[day - 1] = "0";
                 }
             }
             
@@ -106,24 +135,93 @@ public class AttendancePageViewModel : ViewModelBase
                 totalHours
             ));
         }
-
-        Console.WriteLine($"Test rows count: {Rows.Count}");
-        Console.WriteLine($"Day headers count: {DayHeaders.Count}");
     }
 
-    private string GetShortDayOfWeek(DayOfWeek dayOfWeek)
+    private void LoadEmptyData()
     {
-        return dayOfWeek switch
+        Rows.Clear();
+        DayHeaders.Clear();
+
+        // Можно показать один месяц с нулями или просто сообщение
+        var currentDate = DateTime.Today;
+        var monthDays = DateTime.DaysInMonth(currentDate.Year, currentDate.Month);
+
+        for (int day = 1; day <= monthDays; day++)
         {
-            DayOfWeek.Monday => "Пн",
-            DayOfWeek.Tuesday => "Вт",
-            DayOfWeek.Wednesday => "Ср",
-            DayOfWeek.Thursday => "Чт",
-            DayOfWeek.Friday => "Пт",
-            DayOfWeek.Saturday => "Сб",
-            DayOfWeek.Sunday => "Вс",
-            _ => "??"
+            DayHeaders.Add(day);
+        }
+
+        var values = new string[monthDays];
+        for (int i = 0; i < monthDays; i++)
+        {
+            values[i] = "0";
+        }
+
+        Rows.Add(new AttendanceRow(
+            GetRussianMonthYear(currentDate),
+            values,
+            0
+        ));
+
+        Console.WriteLine("No attendance data — showing empty month");
+    }
+
+    private void LoadTestData()
+    {
+        Rows.Clear();
+        DayHeaders.Clear();
+
+        // Создаем тестовые "пропуски" только в 3 месяцах: например, февраль, март, апрель
+        var testMonths = new[]
+        {
+            new DateTime(DateTime.Today.Year, 2, 1),
+            new DateTime(DateTime.Today.Year, 3, 1),
+            new DateTime(DateTime.Today.Year, 4, 1)
         };
+
+        foreach (var monthDate in testMonths)
+        {
+            var monthDays = DateTime.DaysInMonth(monthDate.Year, monthDate.Month);
+
+            DayHeaders.Clear();
+            for (int day = 1; day <= monthDays; day++)
+            {
+                DayHeaders.Add(day);
+            }
+
+            var values = new string[monthDays];
+            var totalHours = 0;
+            var random = new Random(monthDate.Month * 1000 + monthDate.Year); // для разнообразия
+
+            for (int day = 1; day <= monthDays; day++)
+            {
+                var currentDay = new DateTime(monthDate.Year, monthDate.Month, day);
+                
+                if (currentDay.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    values[day - 1] = "—";
+                    continue;
+                }
+
+                // Генерируем пропуски только в 60% дней (чтобы не все месяцы были пустыми)
+                if (random.Next(0, 10) > 4)
+                {
+                    var hours = random.Next(1, 5);
+                    values[day - 1] = hours.ToString();
+                    totalHours += hours;
+                }
+                else
+                {
+                    values[day - 1] = "0";
+                }
+            }
+            
+            Rows.Add(new AttendanceRow(
+                GetRussianMonthYear(monthDate),
+                values,
+                totalHours
+            ));
+        }
     }
 
     private static readonly string[] RussianMonths =
@@ -134,13 +232,6 @@ public class AttendancePageViewModel : ViewModelBase
 
     private string GetRussianMonthYear(DateTime date)
     {
-        try
-        {
-            return $"{RussianMonths[date.Month - 1]} {date:yyyy}";
-        }
-        catch
-        {
-            return date.ToString("yyyy-MM");
-        }
+        return $"{RussianMonths[date.Month - 1]} {date:yyyy}";
     }
 }
